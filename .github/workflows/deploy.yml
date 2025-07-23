@@ -1,0 +1,27 @@
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: true
+          fetch-depth: 0
+      - name: Setup Hugo (强制使用扩展版本)
+        uses: peaceiris/actions-hugo@v3
+        with:
+          hugo-version: '0.148.1'
+          extended: true
+          force: true  # 强制安装扩展版本
+      - name: Verify Hugo version
+        run: |
+          hugo version
+          file $(which hugo)  # 检查是否为扩展版本
+      - name: Clean and rebuild modules
+        run: |
+          hugo mod clean
+          hugo mod get -u
+          hugo mod tidy
+      - name: Build site
+        run: hugo --gc --minify --logLevel info
+        env:
+          HUGO_ENV: production

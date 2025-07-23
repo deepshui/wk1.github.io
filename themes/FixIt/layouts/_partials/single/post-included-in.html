@@ -1,0 +1,33 @@
+{{- $categories := slice -}}
+{{- range .GetTerms "categories" -}}
+  {{- $categories = $categories | append (
+    printf `<a href="%s" class="post-category" title="%s">%s</a>`
+    .RelPermalink
+    (printf "%s - %s" (T "category") .LinkTitle)
+    .LinkTitle
+  ) -}}
+{{- end -}}
+{{- $categoriesStr := delimit $categories " · " -}}
+
+{{- $collections := slice -}}
+{{- range .GetTerms "collections" -}}
+  {{- $collections = $collections | append (
+    printf `<a href="%s" class="post-collection" title="%s">%s</a>`
+    .RelPermalink
+    (printf "%s - %s" (T "collection") .LinkTitle)
+    .LinkTitle
+  ) -}}
+{{- end -}}
+{{- $collectionStr := delimit $collections " · " -}}
+
+{{- if or .Params.categories .Params.collections -}}
+  <span class="post-included-in">
+    {{- if not .Params.collections -}}
+      {{- i18n "single.includedIn.categories" (dict "Categories" $categoriesStr) | safeHTML -}}
+    {{- else if not .Params.categories -}}
+      {{- i18n "single.includedIn.collections" (dict "Collections" $collectionStr) | safeHTML -}}
+    {{- else -}}
+      {{- i18n "single.includedIn.both" (dict "Categories" $categoriesStr "Collections" $collectionStr) | safeHTML -}}
+    {{- end -}}
+  </span>
+{{- end -}}
